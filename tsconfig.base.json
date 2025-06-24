@@ -1,0 +1,15 @@
+{
+	"compilerOptions": {
+		"incremental": true,
+		"declaration": true,
+		"noEmit": true,
+		"resolveJsonModule": true,
+
+		"strict": true,
+		"noUncheckedIndexedAccess": true,
+
+		/* Experimental Options */
+		"experimentalDecorators": true,
+		"emitDecoratorMetadata": false
+	}
+}

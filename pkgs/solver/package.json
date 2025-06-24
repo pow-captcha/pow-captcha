@@ -1,0 +1,9 @@
+{
+	"name": "@pow-captcha/solver",
+	"version": "0.0.0",
+	"module": "dist/lib.js",
+	"types": "dist/lib.d.ts",
+	"scripts": {
+		"build": "tsc -p tsconfig.build.json"
+	}
+}
