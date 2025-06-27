@@ -12,6 +12,7 @@ export async function solveJs(
 		true;
 		i++
 	) {
+		// using little-endian
 		solutionView.setBigUint64(0, i, true);
 
 		const hashArrayBuf = await crypto.subtle.digest("SHA-256", arr);

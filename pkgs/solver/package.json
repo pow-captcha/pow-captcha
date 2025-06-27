@@ -4,6 +4,7 @@
 	"module": "dist/lib.js",
 	"types": "dist/lib.d.ts",
 	"scripts": {
-		"build": "tsc -p tsconfig.build.json"
+		"build": "tsc -p tsconfig.build.json",
+		"test": "jest"
 	}
 }
