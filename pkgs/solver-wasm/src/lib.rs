@@ -1,3 +1,8 @@
+extern crate wee_alloc;
+
+#[global_allocator]
+static ALLOC: wee_alloc::WeeAlloc = wee_alloc::WeeAlloc::INIT;
+
 use sha2::{Digest, Sha256};
 use wasm_bindgen::prelude::*;
 
