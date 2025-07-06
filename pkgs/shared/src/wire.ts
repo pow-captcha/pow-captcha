@@ -3,6 +3,7 @@ import {
 	fromByteArray as serializeArray,
 	toByteArray as deserializeArray,
 } from "base64-js";
+import { byteArraysEqual } from "./utils";
 
 export { serializeArray, deserializeArray };
 
@@ -56,7 +57,7 @@ export async function verifyAndDeserializeData<T>(
 ): Promise<T> {
 	const arr = utf16StringToArrayBuffer(`${signedData.data}:${secret}`);
 	const hash = new Uint8Array(await crypto.subtle.digest("SHA-256", arr));
-	if (hash !== deserializeArray(signedData.hash)) {
+	if (!byteArraysEqual(hash, deserializeArray(signedData.hash))) {
 		throw new Error(`Signed data verification failed, hash mismatch`);
 	}
 	const data = JSON.parse(signedData.data);
