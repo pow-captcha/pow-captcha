@@ -4,3 +4,5 @@
 /pkgs/*/node_modules/
 /pkgs/*/dist/
 /pkgs/*/.turbo/
+
+/pkgs/solver-wasm/target/
