@@ -10,14 +10,11 @@ export type CreateChallengesOptions = {
 	difficulty?: number;
 };
 
-export async function createChallenges(
-	{
-		challengeCount = 50,
-		challengeLength = 16,
-		difficulty = 2,
-	}: CreateChallengesOptions,
-	secret: string,
-): Promise<wire.SignedData> {
+export async function createChallengesRaw({
+	challengeCount = 50,
+	challengeLength = 16,
+	difficulty = 2,
+}: CreateChallengesOptions): Promise<wire.Challenge> {
 	const challenges = utils.createArray(
 		challengeCount,
 		(): wire.ChallengeEntry => {
@@ -34,30 +31,33 @@ export async function createChallenges(
 		},
 	);
 
-	const challenge: wire.Challenge = {
+	return {
 		magic: wire.CHALLENGE_MAGIC,
 		challenges,
 	};
-	return await wire.serializeAndSignData(challenge, secret);
 }
 
-export async function redeemChallengeSolution(
-	{ challengesSigned, solutions }: wire.ChallengeSolution,
+export async function createChallenges(
+	options: CreateChallengesOptions,
 	secret: string,
 ): Promise<wire.SignedData> {
-	const challengesWire = await wire.verifyAndDeserializeData(
-		challengesSigned,
-		wire.challengeSchema,
+	return await wire.serializeAndSignData(
+		createChallengesRaw(options),
 		secret,
 	);
+}
 
-	if (challengesWire.challenges.length !== solutions.length) {
+export async function redeemChallengeSolutionRaw(
+	challenges: wire.Challenge,
+	solutions: Array<string>,
+): Promise<wire.Redeemed> {
+	if (challenges.challenges.length !== solutions.length) {
 		throw new Error(
 			`Number of solutions does not match the number of challenges`,
 		);
 	}
 
-	const verifyTasks = challengesWire.challenges.map(async (challenge, i) => {
+	const verifyTasks = challenges.challenges.map(async (challenge, i) => {
 		const solution = solutions[i]!;
 		const isValid = await solver.verify(
 			wire.deserializeArray(challenge[0]),
@@ -70,17 +70,31 @@ export async function redeemChallengeSolution(
 	});
 	await Promise.all(verifyTasks);
 
-	const redeemed: wire.Redeemed = {
+	return {
 		magic: wire.REDEEMED_MAGIC,
 	};
+}
+
+export async function redeemChallengeSolution(
+	{ challengesSigned, solutions }: wire.ChallengeSolution,
+	secret: string,
+): Promise<wire.SignedData> {
+	const challenges = await wire.verifyAndDeserializeData(
+		challengesSigned,
+		wire.challengeSchema,
+		secret,
+	);
+
+	const redeemed = await redeemChallengeSolutionRaw(challenges, solutions);
+
 	return await wire.serializeAndSignData(redeemed, secret);
 }
 
 export async function verifyRedeemed(
 	redeemedSigned: wire.SignedData,
 	secret: string,
-): Promise<void> {
-	await wire.verifyAndDeserializeData(
+): Promise<wire.Redeemed> {
+	return await wire.verifyAndDeserializeData(
 		redeemedSigned,
 		wire.redeemedSchema,
 		secret,
