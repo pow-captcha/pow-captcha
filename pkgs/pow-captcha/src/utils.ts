@@ -17,3 +17,16 @@ export function byteArraysEqual(arr1: Uint8Array, arr2: Uint8Array): boolean {
 	}
 	return true;
 }
+
+export function arrayStartsWith(array: Uint8Array, search: Uint8Array): boolean {
+	const searchLen = search.length;
+	if (searchLen > array.length) {
+		return false;
+	}
+	for (let i = 0; i < searchLen; i += 1) {
+		if (array[i] !== search[i]) {
+			return false;
+		}
+	}
+	return true;
+}

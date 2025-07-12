@@ -1,5 +1,6 @@
-import { utils, wire } from "@pow-captcha/shared";
-import * as solver from "@pow-captcha/solver";
+import * as wire from "./wire";
+import * as solver from "./solver";
+import { createArray } from "./utils";
 
 export type CreateChallengesOptions = {
 	/** @default 50 */
@@ -15,21 +16,15 @@ export async function createChallengesRaw({
 	challengeLength = 16,
 	difficulty = 2,
 }: CreateChallengesOptions): Promise<wire.Challenge> {
-	const challenges = utils.createArray(
-		challengeCount,
-		(): wire.ChallengeEntry => {
-			const challenge = new Uint8Array(challengeLength);
-			crypto.getRandomValues(challenge);
+	const challenges = createArray(challengeCount, (): wire.ChallengeEntry => {
+		const challenge = new Uint8Array(challengeLength);
+		crypto.getRandomValues(challenge);
 
-			const target = new Uint8Array(difficulty);
-			crypto.getRandomValues(target);
+		const target = new Uint8Array(difficulty);
+		crypto.getRandomValues(target);
 
-			return [
-				wire.serializeArray(challenge),
-				wire.serializeArray(target),
-			];
-		},
-	);
+		return [wire.serializeArray(challenge), wire.serializeArray(target)];
+	});
 
 	return {
 		magic: wire.CHALLENGE_MAGIC,
@@ -41,10 +36,8 @@ export async function createChallenges(
 	options: CreateChallengesOptions,
 	secret: string,
 ): Promise<wire.SignedData> {
-	return await wire.serializeAndSignData(
-		createChallengesRaw(options),
-		secret,
-	);
+	const data = await createChallengesRaw(options);
+	return await wire.serializeAndSignData(data, secret);
 }
 
 export async function redeemChallengeSolutionRaw(

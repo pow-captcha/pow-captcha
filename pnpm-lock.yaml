@@ -42,16 +42,7 @@ importers:
         specifier: ^8.35.0
         version: 8.35.0(eslint@9.29.0)(typescript@5.8.3)
 
-  pkgs/server:
-    dependencies:
-      '@pow-captcha/shared':
-        specifier: workspace:*
-        version: link:../shared
-      '@pow-captcha/solver':
-        specifier: workspace:*
-        version: link:../solver
-
-  pkgs/shared:
+  pkgs/pow-captcha:
     dependencies:
       base64-js:
         specifier: ^1.5.1
@@ -60,7 +51,7 @@ importers:
         specifier: ^3.25.67
         version: 3.25.67
 
-  pkgs/solver: {}
+  pkgs/solver-wasm: {}
 
 packages:
 

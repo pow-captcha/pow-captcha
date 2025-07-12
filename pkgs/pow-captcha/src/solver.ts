@@ -1,3 +1,5 @@
+import { arrayStartsWith } from "./utils";
+
 export async function solveJs(
 	nonce: Uint8Array,
 	target: Uint8Array,
@@ -41,17 +43,4 @@ export async function verify(
 	const hash = new Uint8Array(hashArrayBuf);
 
 	return arrayStartsWith(hash, target);
-}
-
-function arrayStartsWith(array: Uint8Array, search: Uint8Array): boolean {
-	const searchLen = search.length;
-	if (searchLen > array.length) {
-		return false;
-	}
-	for (let i = 0; i < searchLen; i += 1) {
-		if (array[i] !== search[i]) {
-			return false;
-		}
-	}
-	return true;
 }

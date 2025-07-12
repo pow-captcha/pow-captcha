@@ -1,6 +1,6 @@
 import { describe, it, expect } from "@jest/globals";
-import { wire } from "@pow-captcha/shared";
-import * as server from "./lib";
+import * as wire from "./wire";
+import * as server from "./server";
 
 const SECRET = "e2c0b4ab-a215-4b36-bba8-19fae1601045";
 

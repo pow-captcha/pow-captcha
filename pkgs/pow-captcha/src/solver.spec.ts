@@ -1,5 +1,5 @@
 import { describe, it, expect } from "@jest/globals";
-import * as solver from "./lib";
+import * as solver from "./solver";
 
 describe("solver", () => {
 	it("solveJs", async () => {
