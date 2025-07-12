@@ -1,5 +1,3 @@
-import * as server from "./server";
-import * as solver from "./solver";
-import * as wire from "./wire";
-
-export { server, solver, wire };
+export * as server from "./server";
+export * as solver from "./solver";
+export * as wire from "./wire";

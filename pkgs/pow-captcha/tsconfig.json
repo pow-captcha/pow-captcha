@@ -1,4 +1,26 @@
 {
-	"extends": "../../tsconfig.base.json",
-	"include": ["src/**/*"]
+	"compilerOptions": {
+		"declaration": true,
+		"resolveJsonModule": true,
+
+		"strict": true,
+		"noUncheckedIndexedAccess": true,
+
+		/* Experimental Options */
+		"experimentalDecorators": true,
+		"emitDecoratorMetadata": false,
+
+		"incremental": false,
+		"noEmit": false,
+		"target": "es2020",
+		"module": "es2020",
+		"moduleResolution": "bundler",
+		"sourceMap": true,
+		"declarationMap": true,
+		"isolatedModules": true,
+
+		"outDir": "dist"
+	},
+	"include": ["src/**/*"],
+	"exclude": ["**/*.spec.ts"]
 }

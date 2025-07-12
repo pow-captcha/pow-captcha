@@ -1,0 +1,4 @@
+*
+!/dist/*
+!/src/*
+/src/*.spec.ts
