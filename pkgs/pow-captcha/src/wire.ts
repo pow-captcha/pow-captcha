@@ -1,4 +1,4 @@
-import { z } from "zod";
+import * as z from "zod/mini";
 import {
 	fromByteArray as serializeArray,
 	toByteArray as deserializeArray,
@@ -52,7 +52,7 @@ export async function serializeAndSignData<T>(
 
 export async function verifyAndDeserializeData<T>(
 	signedData: SignedData,
-	schema: z.ZodType<T>,
+	schema: z.ZodMiniType<T>,
 	secret: string,
 ): Promise<T> {
 	const arr = utf16StringToArrayBuffer(`${signedData.data}:${secret}`);
