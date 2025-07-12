@@ -18,7 +18,10 @@ export function byteArraysEqual(arr1: Uint8Array, arr2: Uint8Array): boolean {
 	return true;
 }
 
-export function arrayStartsWith(array: Uint8Array, search: Uint8Array): boolean {
+export function arrayStartsWith(
+	array: Uint8Array,
+	search: Uint8Array,
+): boolean {
 	const searchLen = search.length;
 	if (searchLen > array.length) {
 		return false;
@@ -30,3 +33,35 @@ export function arrayStartsWith(array: Uint8Array, search: Uint8Array): boolean 
 	}
 	return true;
 }
+
+export function chunkArray<T>(
+	chunkSize: number,
+	input: ReadonlyArray<T>,
+): Array<Array<T>> {
+	const chunks: Array<Array<T>> = [];
+	for (let i = 0; i < input.length; i += chunkSize) {
+		const chunk = input.slice(i, i + chunkSize);
+		chunks.push(chunk);
+	}
+	return chunks;
+}
+
+// export function distributeArray<T>(
+// 	numBuckets: number,
+// 	input: ReadonlyArray<T>,
+// ): Array<Array<T>> {
+// 	// input.length / numBuckets
+// 	const chunkSize = Math.ceil();
+
+
+
+// 	return createArray(numBuckets, (bucket): Array<T> => {
+// 		const start = bucket * chunkSize;
+// 		return input.slice(start, start + chunkSize);
+// 	});
+// 	// for (let i = 0; i < input.length; i += 1) {
+// 	// 	const bucketIndex = Math.floor(i / (input.length / numBuckets));
+// 	// 	distributed[bucketIndex]!.push(input[i]!);
+// 	// }
+// 	// return distributed;
+// }

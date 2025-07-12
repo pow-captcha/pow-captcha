@@ -1,4 +1,5 @@
-import { arrayStartsWith } from "./utils";
+import type { WorkerRequest, WorkerResponse } from "./solver-worker";
+import { arrayStartsWith, chunkArray } from "./utils";
 
 export async function solveJs(
 	nonce: Uint8Array,
@@ -28,6 +29,48 @@ export async function solveJs(
 			);
 		}
 	}
+}
+
+export async function solveChallenges(
+	challenges: ReadonlyArray<readonly [Uint8Array, Uint8Array]>,
+	engine?: "wasm" | "js",
+): Promise<Array<Uint8Array>> {
+	const workerChallenges = chunkArray(
+		Math.floor(challenges.length / navigator.hardwareConcurrency),
+		challenges,
+	);
+
+	console.log("workerChallenges", workerChallenges);
+
+	const workers = workerChallenges.map(async (challenges) => {
+		const worker = new Worker(
+			new URL("./solver-worker.js", import.meta.url),
+			{
+				type: "module",
+			},
+		);
+
+		try {
+			const resultPromise = new Promise<ReadonlyArray<Uint8Array>>(
+				(onOk, onErr) => {
+					worker.onerror = onErr;
+					worker.onmessage = (m: MessageEvent<WorkerResponse>) => {
+						console.log("worker msg", m);
+						onOk(m.data.solutions);
+					};
+				},
+			);
+
+			const req: WorkerRequest = { challenges, engine };
+			worker.postMessage(req);
+
+			return await resultPromise;
+		} finally {
+			worker.terminate();
+		}
+	});
+
+	return (await Promise.all(workers)).flat();
 }
 
 export async function verify(
