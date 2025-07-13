@@ -1,5 +1,5 @@
 import * as wire from "./wire";
-import * as solver from "./solver";
+import * as solver from "./solver/solver";
 import { createArray } from "./utils";
 
 export type CreateChallengesOptions = {

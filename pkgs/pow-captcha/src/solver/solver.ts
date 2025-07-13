@@ -2,8 +2,8 @@ import {
 	WORKER_READY,
 	type WorkerRequest,
 	type WorkerResponse,
-} from "./solver-shared";
-import { arrayStartsWith, chunkArray } from "./utils";
+} from "./shared";
+import { arrayStartsWith, chunkArray } from "../utils";
 
 export async function solveJs(
 	nonce: Uint8Array,

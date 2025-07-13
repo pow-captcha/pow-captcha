@@ -1,10 +1,10 @@
-import * as solver from "./solver";
-import * as wasm from "@pow-captcha/solver-wasm";
+import { solveJs } from "./solver";
+import { solve as solveWasm } from "@pow-captcha/solver-wasm";
 import {
 	WORKER_READY,
 	type WorkerRequest,
 	type WorkerResponse,
-} from "./solver-shared";
+} from "./shared";
 
 async function solve(
 	nonce: Uint8Array,
@@ -14,20 +14,20 @@ async function solve(
 ): Promise<Uint8Array> {
 	switch (engine) {
 		case "js":
-			return await solver.solveJs(nonce, target, difficultyBits);
+			return await solveJs(nonce, target, difficultyBits);
 
 		case "wasm":
-			return wasm.solve(nonce, target, difficultyBits);
+			return solveWasm(nonce, target, difficultyBits);
 
 		case undefined:
 			try {
-				return wasm.solve(nonce, target, difficultyBits);
+				return solveWasm(nonce, target, difficultyBits);
 			} catch (err) {
 				console.warn(
 					"pow-captcha: Falling back to js solver. Error: ",
 					err,
 				);
-				return await solver.solveJs(nonce, target, difficultyBits);
+				return await solveJs(nonce, target, difficultyBits);
 			}
 	}
 }
