@@ -3,13 +3,16 @@ import react from "@vitejs/plugin-react";
 import wasm from "vite-plugin-wasm";
 import topLevelAwait from "vite-plugin-top-level-await";
 
-const plugins: Array<PluginOption> = [react(), wasm(), topLevelAwait()];
+const plugins: () => Array<PluginOption> = () => [
+	react(),
+	wasm(),
+	topLevelAwait(),
+];
 
 // https://vite.dev/config/
 export default defineConfig({
-	plugins,
+	plugins: plugins(),
 	worker: {
-		format: "es",
-		plugins: () => plugins,
+		plugins,
 	},
 });
