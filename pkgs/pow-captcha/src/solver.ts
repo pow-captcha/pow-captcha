@@ -1,4 +1,8 @@
-import type { WorkerRequest, WorkerResponse } from "./solver-worker";
+import {
+	WORKER_READY,
+	type WorkerRequest,
+	type WorkerResponse,
+} from "./solver-shared";
 import { arrayStartsWith, chunkArray } from "./utils";
 
 export async function solveJs(
@@ -51,6 +55,22 @@ export async function solveChallenges(
 		);
 
 		try {
+			// await worker ready
+			await new Promise<void>((onOk, onErr) => {
+				worker.onerror = onErr;
+				worker.onmessage = (m) => {
+					if (m.data !== WORKER_READY) {
+						onErr(
+							new Error(
+								`pow-captcha: Worker-ready ("${WORKER_READY}") expected, got: "${m.data}"`,
+							),
+						);
+					} else {
+						onOk();
+					}
+				};
+			});
+
 			const resultPromise = new Promise<ReadonlyArray<Uint8Array>>(
 				(onOk, onErr) => {
 					worker.onerror = onErr;

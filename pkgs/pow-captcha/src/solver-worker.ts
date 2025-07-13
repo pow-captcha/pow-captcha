@@ -1,24 +1,10 @@
 import * as solver from "./solver";
-// import * as wasm from "@pow-captcha/solver-wasm";
-
-export type Challenge = readonly [Uint8Array, Uint8Array];
-
-export type WorkerRequest = {
-	engine?: undefined | "js" | "wasm";
-	challenges: ReadonlyArray<Challenge>;
-};
-
-export type WorkerResponse = {
-	solutions: ReadonlyArray<Uint8Array>;
-};
-
-async function solveWasm(
-	nonce: Uint8Array,
-	target: Uint8Array,
-): Promise<Uint8Array> {
-	const wasm = await import("@pow-captcha/solver-wasm");
-	return wasm.solve(nonce, target);
-}
+import * as wasm from "@pow-captcha/solver-wasm";
+import {
+	WORKER_READY,
+	type WorkerRequest,
+	type WorkerResponse,
+} from "./solver-shared";
 
 async function solve(
 	nonce: Uint8Array,
@@ -30,11 +16,11 @@ async function solve(
 			return await solver.solveJs(nonce, target);
 
 		case "wasm":
-			return await solveWasm(nonce, target);
+			return wasm.solve(nonce, target);
 
 		case undefined:
 			try {
-				return await solveWasm(nonce, target);
+				return wasm.solve(nonce, target);
 			} catch (err) {
 				console.warn(
 					"pow-captcha: Falling back to js solver. Error: ",
@@ -70,3 +56,6 @@ onmessage = (m: MessageEvent<WorkerRequest>) => {
 		console.error("pow-captcha: Failure in worker: ", err);
 	});
 };
+
+// send worker ready
+postMessage(WORKER_READY);
