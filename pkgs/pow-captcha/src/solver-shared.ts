@@ -5,6 +5,7 @@ export type Challenge = readonly [Uint8Array, Uint8Array];
 export type WorkerRequest = {
 	engine?: undefined | "js" | "wasm";
 	challenges: ReadonlyArray<Challenge>;
+	difficultyBits: number;
 };
 
 export type WorkerResponse = {

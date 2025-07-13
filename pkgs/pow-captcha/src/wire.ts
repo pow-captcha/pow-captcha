@@ -21,6 +21,7 @@ export const CHALLENGE_MAGIC = "2104f639-ba1b-48f3-9443-889128163f5a";
 export const challengeSchema = z.object({
 	magic: z.literal(CHALLENGE_MAGIC),
 	challenges: z.array(challengeEntrySchema),
+	difficultyBits: z.number(),
 });
 export type Challenge = z.output<typeof challengeSchema>;
 

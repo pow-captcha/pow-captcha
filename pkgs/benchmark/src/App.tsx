@@ -10,7 +10,7 @@ async function benchmark(cb: () => void | Promise<void>): Promise<number> {
 }
 
 export default function App() {
-	const [durationJs, setDurationJs] = useState<null | number>(null);
+	const [durationJs, _setDurationJs] = useState<null | number>(null);
 	const [durationWasm, setDurationWasm] = useState<null | number>(null);
 
 	const [runBenchmark, setRunBenchmark] = useState(false);
@@ -26,8 +26,8 @@ export default function App() {
 
 		async function init() {
 			const challengesRaw = await powCaptcha.server.createChallengesRaw({
-				difficulty: 2,
-				challengeCount: 64,
+				difficultyBits: 18,
+				challengeCount: 32,
 			});
 
 			const challenges = challengesRaw.challenges.map(
@@ -39,19 +39,21 @@ export default function App() {
 			);
 
 			const durationWasm = await benchmark(async () => {
-				const solutions = await powCaptcha.solver.solveChallenges(
+				const solutions = await powCaptcha.solver.solveChallenges({
+					difficultyBits: challengesRaw.difficultyBits,
 					challenges,
-					"wasm",
-				);
+					engine: "wasm",
+				});
 				console.log("wasm solutions", solutions);
 			});
 			setDurationWasm(durationWasm);
 
 			// const durationJs = await benchmark(async () => {
-			// 	const solutions = await powCaptcha.solver.solveChallenges(
+			// 	const solutions = await powCaptcha.solver.solveChallenges({
+			// 		difficultyBits: challengesRaw.difficultyBits,
 			// 		challenges,
-			// 		"js",
-			// 	);
+			// 		engine: "js",
+			// 	});
 			// 	console.log("js solutions", solutions);
 			// });
 			// setDurationJs(durationJs);

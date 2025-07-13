@@ -3,24 +3,24 @@ import * as solver from "./solver";
 import { createArray } from "./utils";
 
 export type CreateChallengesOptions = {
-	/** @default 50 */
+	/** @default 32 */
 	challengeCount?: number;
 	/** @default 16 */
 	challengeLength?: number;
-	/** @default 2 */
-	difficulty?: number;
+	/** @default 18 */
+	difficultyBits?: number;
 };
 
 export async function createChallengesRaw({
-	challengeCount = 50,
+	challengeCount = 32,
 	challengeLength = 16,
-	difficulty = 2,
+	difficultyBits = 18,
 }: CreateChallengesOptions): Promise<wire.Challenge> {
 	const challenges = createArray(challengeCount, (): wire.ChallengeEntry => {
 		const challenge = new Uint8Array(challengeLength);
 		crypto.getRandomValues(challenge);
 
-		const target = new Uint8Array(difficulty);
+		const target = new Uint8Array(Math.ceil(difficultyBits / 8));
 		crypto.getRandomValues(target);
 
 		return [wire.serializeArray(challenge), wire.serializeArray(target)];
@@ -28,6 +28,7 @@ export async function createChallengesRaw({
 
 	return {
 		magic: wire.CHALLENGE_MAGIC,
+		difficultyBits,
 		challenges,
 	};
 }
@@ -55,6 +56,7 @@ export async function redeemChallengeSolutionRaw(
 		const isValid = await solver.verify(
 			wire.deserializeArray(challenge[0]),
 			wire.deserializeArray(challenge[1]),
+			challenges.difficultyBits,
 			wire.deserializeArray(solution),
 		);
 		if (!isValid) {
