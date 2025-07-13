@@ -7,9 +7,9 @@ use sha2::{Digest, Sha256};
 use wasm_bindgen::prelude::*;
 
 #[wasm_bindgen]
-pub fn solve(nonce: &[u8], target: &[u8], difficulty_bits: u32) -> Box<[u8]> {
+pub fn solve(nonce: Box<[u8]>, target: Box<[u8]>, difficulty_bits: u32) -> Box<[u8]> {
     let mut buf = vec![0u8; 8 + nonce.len()];
-    buf[8..].copy_from_slice(nonce);
+    buf[8..].copy_from_slice(&nonce);
 
     let target_whole_bytes = &target[0..(difficulty_bits as usize / 8)];
 
@@ -49,7 +49,7 @@ mod tests {
     #[test]
     fn solve() {
         assert_eq!(
-            super::solve(&[1, 2], &[3, 4, 5], 18).as_ref(),
+            super::solve([1, 2].into(), [3, 4, 5].into(), 18).as_ref(),
             [45, 176, 0, 0, 0, 0, 0, 0]
         );
     }
