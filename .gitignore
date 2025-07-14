@@ -6,3 +6,5 @@
 /pkgs/*/.turbo/
 
 /pkgs/solver-wasm/target/
+
+/pkgs/benchmark/.react-router/
