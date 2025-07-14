@@ -1,10 +1,11 @@
-extern crate wee_alloc;
-
-#[global_allocator]
-static ALLOC: wee_alloc::WeeAlloc = wee_alloc::WeeAlloc::INIT;
-
 use sha2::{Digest, Sha256};
 use wasm_bindgen::prelude::*;
+
+#[cfg(target_arch = "wasm32")]
+#[global_allocator]
+static ALLOCATOR: lol_alloc::AssumeSingleThreaded<lol_alloc::FreeListAllocator> =
+    // SAFETY: This application is single threaded, so using AssumeSingleThreaded is allowed.
+    unsafe { lol_alloc::AssumeSingleThreaded::new(lol_alloc::FreeListAllocator::new()) };
 
 #[wasm_bindgen]
 pub fn solve(nonce: Box<[u8]>, target: Box<[u8]>, difficulty_bits: u32) -> Box<[u8]> {
