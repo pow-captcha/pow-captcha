@@ -70,7 +70,7 @@ export async function solveChallenges({
 
 	const workers = workerChallenges.map(async (challenges) => {
 		const worker = new Worker(
-			new URL("./solver-worker.js", import.meta.url),
+			new URL("./worker.js", import.meta.url),
 			{
 				type: "module",
 			},
